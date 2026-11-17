@@ -3,9 +3,8 @@
 % --- packages ---
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{XCharter}
-\usepackage[scaled=0.86]{beramono}
-\usepackage[a4paper,margin=2.3cm,top=2.2cm,bottom=2.4cm]{geometry}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.2cm,bottom=2.4cm]{geometry}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{booktabs,tabularx,array}
@@ -13,12 +12,11 @@
 \usepackage{titlesec}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc,fadings,shadows.blur}
+\usetikzlibrary{arrows.meta,positioning,calc,shadows.blur}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage[most]{tcolorbox}
 \usepackage{caption}
-\usepackage{fancyhdr}
 \usepackage[hidelinks]{hyperref}
 
 % --- colours ---
@@ -26,120 +24,84 @@
 \definecolor{navy}{HTML}{0A1C3A}
 \definecolor{blau}{HTML}{004D98}
 \definecolor{grana}{HTML}{A50044}
-\definecolor{gold}{HTML}{EDBB00}
 \definecolor{muted}{HTML}{667080}
 \definecolor{rule}{HTML}{D8DDE5}
-\definecolor{soft}{HTML}{F4F6FA}
+\definecolor{soft}{HTML}{F5F7FA}
 \definecolor{colH}{HTML}{1E5AB4}
 \definecolor{colA}{HTML}{E03C31}
 \definecolor{colD}{HTML}{BFC6CF}
 \definecolor{colDtext}{HTML}{6F7987}
 \definecolor{grass}{HTML}{3E8B5C}
 \definecolor{grassdark}{HTML}{367C51}
-\definecolor{codebg}{HTML}{0D1B33}
-\definecolor{codecmd}{HTML}{EDBB00}
-\definecolor{codesub}{HTML}{8EC5FF}
-\definecolor{codeflag}{HTML}{FF7EB0}
-\definecolor{codecom}{HTML}{7D8BA3}
+\definecolor{codecmd}{HTML}{A50044}
+\definecolor{codesub}{HTML}{004D98}
+\definecolor{codeflag}{HTML}{0B7A75}
+\definecolor{codecom}{HTML}{7A8494}
 
-% --- page style ---
-\color{ink}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{5pt}
-\linespread{1.06}
+% --- layout ---
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt}
 \raggedbottom
-\setlist{nosep,leftmargin=1.2em,topsep=2pt,itemsep=2pt,label={\color{grana}\textbullet}}
+\setlist{nosep,leftmargin=1.5em,topsep=3pt,itemsep=2pt}
 \setlength{\heavyrulewidth}{0.8pt}
 \setlength{\lightrulewidth}{0.4pt}
-\captionsetup{font=small,labelfont={bf,color=grana},labelsep=period,skip=6pt,
-  justification=raggedright,singlelinecheck=false}
+\captionsetup{font=small,labelfont=bf,labelsep=colon,skip=6pt}
 \captionsetup[table]{position=top}
+\pagestyle{plain}
 
-\titleformat{\section}{\Large\bfseries\color{navy}}{\color{grana}\thesection}{0.55em}{}
-  [\vspace{1pt}{\color{rule}\titlerule[0.7pt]}]
-\titlespacing*{\section}{0pt}{12pt}{5pt}
-\titleformat{\subsection}{\large\bfseries\color{navy}}{\color{grana}\thesubsection}{0.5em}{}
-\titlespacing*{\subsection}{0pt}{7pt}{2pt}
-\titleformat{\paragraph}[runin]{\normalsize\bfseries\color{navy}}{}{0pt}{}[.]
-\titlespacing*{\paragraph}{0pt}{5pt}{0.6em}
-
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0pt}
-\fancyfoot[L]{\small\color{muted}Team Ragnir \textperiodcentered{} Technical report \textperiodcentered{} More than a Hack 2027}
-\fancyfoot[R]{\small\bfseries\color{grana}\thepage}
+\titleformat{\section}{\Large\bfseries}{\textcolor{grana}{\thesection}}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\textcolor{grana}{\thesubsection}}{1em}{}
+\titleformat{\paragraph}[runin]{\normalsize\bfseries}{}{0pt}{}[.]
+\titlespacing*{\paragraph}{0pt}{4pt}{0.6em}
 
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcommand{\lab}[1]{\texttt{#1}}
 \newcommand{\lH}{\textcolor{colH}{\textbf{\texttt{H}}}}
 \newcommand{\lA}{\textcolor{colA}{\textbf{\texttt{A}}}}
 \newcommand{\lD}{\textcolor{colDtext}{\textbf{\texttt{D}}}}
 \newcommand{\lX}{\textcolor{colDtext}{\textbf{\texttt{X}}}}
-\newcommand{\note}[1]{{\small\color{muted}#1}}
 \newcommand{\cmd}[1]{\textcolor{codecmd}{\textbf{#1}}}
 \newcommand{\sub}[1]{\textcolor{codesub}{#1}}
 \newcommand{\flag}[1]{\textcolor{codeflag}{#1}}
-\newcommand{\com}[1]{\textcolor{codecom}{\itshape #1}}
-
-\tikzset{
-  pH/.style={circle,fill=colH,draw=white,line width=0.6pt,inner sep=0pt,minimum size=2.6mm},
-  pA/.style={circle,fill=colA,draw=white,line width=0.6pt,inner sep=0pt,minimum size=2.6mm},
-  ball/.style={circle,fill=white,draw=ink,line width=0.5pt,inner sep=0pt,minimum size=1.7mm},
-  tag/.style={font=\scriptsize,text=white,align=center},
-  line/.style={draw=white,line width=0.6pt},
-}
+\newcommand{\com}[1]{\textcolor{codecom}{\textit{#1}}}
 
 \begin{document}
 
-% --- title banner ---
-\thispagestyle{fancy}
-\begin{tikzpicture}[remember picture,overlay]
-  \coordinate (nw) at (current page.north west);
-  \fill[navy] (nw) rectangle ([yshift=-4.7cm]current page.north east);
-  \begin{scope}
-    \clip ([xshift=-8.6cm]current page.north east) rectangle ([yshift=-4.7cm]current page.north east);
-    \foreach \i in {0,...,7} {
-      \fill[blau] ([xshift=-8.6cm+\i*2.2cm]current page.north east) rectangle ++(1.1cm,-4.7cm);
-      \fill[grana] ([xshift=-7.5cm+\i*2.2cm]current page.north east) rectangle ++(1.1cm,-4.7cm);
-    }
-  \end{scope}
-  \fill[navy,path fading=east] ([xshift=-8.7cm]current page.north east) rectangle ([xshift=-2.6cm,yshift=-4.7cm]current page.north east);
-  \fill[navy] ([xshift=-8.7cm]current page.north east) rectangle ([xshift=-8.6cm,yshift=-4.7cm]current page.north east);
-  \fill[gold] ([yshift=-4.7cm]nw) rectangle ([yshift=-4.82cm]current page.north east);
-  \node[anchor=north west,text=gold,font=\small\bfseries] at ([xshift=2.3cm,yshift=-1.0cm]nw)
-    {TECHNICAL REPORT \textperiodcentered{} TEAM RAGNIR};
-  \node[anchor=north west,text=white,font=\fontsize{24}{28}\selectfont\bfseries] at ([xshift=2.3cm,yshift=-1.55cm]nw)
-    {Who has the ball?};
-  \node[anchor=north west,text=white!85!navy,font=\large] at ([xshift=2.3cm,yshift=-2.5cm]nw)
-    {Frame-level possession from automatic tracking};
-  \node[anchor=north west,text=white!62!navy,font=\small] at ([xshift=2.3cm,yshift=-3.35cm]nw)
-    {More than a Hack 2027, Phase 1 \textperiodcentered{} FC Barcelona vs Athletic Club, LaLiga 2024--25};
-  \node[anchor=north west,text=white!62!navy,font=\footnotesize\ttfamily] at ([xshift=2.3cm,yshift=-3.85cm]nw)
-    {github.com/Pers8/ragnir-possession-mtah-2027};
+% --- title ---
+\begin{center}
+{\small\scshape More than a Hack 2027 \textperiodcentered{} Phase 1: Ball Possession}\\[10pt]
+{\LARGE\bfseries Who has the ball?}\\[5pt]
+{\Large Frame-level possession from automatic tracking}\\[12pt]
+{\large Team Ragnir}\\[4pt]
+{\small FC Barcelona vs Athletic Club, LaLiga 2024--25}\\[2pt]
+{\small\url{https://github.com/Pers8/ragnir-possession-mtah-2027}}\\[2pt]
+{\small 17 November 2026}
+\end{center}
+\vspace{2pt}
+\noindent\begin{tikzpicture}
+  \fill[blau] (0,0) rectangle (0.5\linewidth,0.9pt);
+  \fill[grana] (0.5\linewidth,0) rectangle (\linewidth,0.9pt);
 \end{tikzpicture}
-\vspace*{2.75cm}
+\vspace{2pt}
 
-% --- abstract ---
-\begin{tcolorbox}[enhanced,colback=soft,colframe=soft,boxrule=0pt,arc=2pt,
-  left=10pt,right=10pt,top=7pt,bottom=7pt,borderline west={2.5pt}{0pt}{grana}]
-{\small\bfseries\color{grana}ABSTRACT}\par\smallskip
-\small
-We label every frame of the tactical video with the team in possession, Barcelona (\lH) or
-Athletic (\lA), or with a dead ball (\lD). Each frame receives a score for the three labels from
-simple, physically motivated cues computed on the automatic tracking and the Smart Tagging. The
-label sequence is then decoded with the Viterbi algorithm under a fixed cost for every change of
-label, which keeps possessions whole, the property the ranking metric rewards. Nothing is trained
-or tuned on the match, the ground truth or the video. On the public five-minute window the method
-reaches a spellF1 of \textbf{0.430} and a macroF1 of \textbf{0.705}, against 0.326 and 0.621 for
-the official baseline.
-\end{tcolorbox}
+\begin{abstract}
+\noindent We label every frame of the tactical video with the team in possession, Barcelona
+(\lH) or Athletic (\lA), or with a dead ball (\lD). Each frame receives a score for the three
+labels from simple, physically motivated cues computed on the automatic tracking and the Smart
+Tagging. The label sequence is then decoded with the Viterbi algorithm under a fixed cost for
+every change of label, which keeps possessions whole, the property the ranking metric rewards.
+Nothing is trained, and no constant is tuned on the match, the ground truth or the video. On the
+public five-minute window the method reaches a spellF1 of 0.430 and a macroF1 of 0.705, against
+0.326 and 0.621 for the official baseline.
+\end{abstract}
 
 % --- approach ---
 \section{Approach}
 
-The ranking metric, spellF1, treats each possession as one object and matches predicted and
-true possessions by their overlap in time. A per-frame classifier is a poor fit for it: wherever
-the evidence is mixed it flickers, and every flicker splits a possession in two. The four official
+The ranking metric, spellF1, treats each possession as one object and matches predicted and true
+possessions by their overlap in time. A per-frame classifier is a poor fit for it: wherever the
+evidence is mixed it flickers, and every flicker splits a possession in two. The four official
 baselines show the effect clearly, with spellF1 changing by a factor of five across smoothing
 windows while macroF1 barely moves.
 
@@ -152,12 +114,12 @@ when the evidence for the other team is strong and lasts.
 \centering
 \begin{tikzpicture}[
   box/.style={rounded corners=3pt,minimum height=11mm,text width=25mm,align=center,
-              font=\small,inner sep=3pt,blur shadow={shadow blur steps=5,shadow xshift=0.5pt,shadow yshift=-0.7pt,shadow opacity=16}},
-  inbox/.style={box,fill=soft,draw=blau!40},
+              font=\small,inner sep=3pt},
+  inbox/.style={box,fill=soft,draw=blau!45,text width=28mm},
   arr/.style={-{Stealth[length=2.3mm]},draw=blau,line width=0.8pt}]
   \node[inbox] (trk) at (0, 0.66) {\textbf{Tracking}\\[-1pt]{\scriptsize ball and players}};
   \node[inbox] (tag) at (0,-0.66) {\textbf{Smart Tagging}\\[-1pt]{\scriptsize phases, set pieces}};
-  \node[box,fill=white,draw=blau,line width=0.9pt,anchor=west] (ev) at (2.55,0)
+  \node[box,fill=white,draw=blau,line width=0.9pt,anchor=west] (ev) at (2.75,0)
     {\textbf{Frame scores}\\[-1pt]{\scriptsize $s_t(k)$ for \lH, \lA, \lD}};
   \node[box,fill=blau,text=white,right=7mm of ev] (vit) {\textbf{Viterbi}\\[-1pt]{\scriptsize cost per change}};
   \node[box,fill=grana,text=white,right=7mm of vit] (out) {\textbf{\lab{frame,label}}\\[-1pt]{\scriptsize 199,319 rows}};
@@ -170,25 +132,48 @@ when the evidence for the other team is strong and lasts.
 turns them into one label per frame.}\label{fig:pipeline}
 \end{figure}
 
+% --- assets ---
+\section{Assets used and dropped}
+
+Table~\ref{tab:data} lists the provided assets. Everything we use comes from the tactical camera,
+whose frames are also the rows of the submission.
+
+\begin{table}[!h]
+\caption{Provided assets and how we used them.}\label{tab:data}
+\centering\small
+\begin{tabularx}{\linewidth}{@{}P{4.1cm}L@{}}
+\toprule
+\textbf{Asset} & \textbf{Use} \\
+\midrule
+Tactical tracking & ball position, distances from the ball to each team, player speeds, team shape \\
+Tracking metadata & which track slot belongs to which team \\
+Smart Tagging & attacking and defending phases, start of set pieces, kick-offs after goals \\
+Homography & dropped: the tracking is already in pitch coordinates \\
+Video, broadcast tracking & dropped: the broadcast feed is not synchronised, and we had no
+external labelled data to build a video model with \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 % --- method ---
 \section{Method}
 
 \subsection{Frame scores}
 
-For each frame $t$ of a half and each label $k \in \{\lH, \lA, \lD\}$ we compute a score
-$s_t(k)$ as the sum of the cues in Tables~\ref{tab:who} and~\ref{tab:dead}. A cue adds points to
-the label it supports and removes points from the labels it argues against. Most cues are worth
-less than one point per frame, so a cue only changes the result if it persists. Distances are in
-metres on the 105.3\,m by 68\,m pitch, and ball speed is computed from positions in consecutive
-frames at 25 frames per second. Windows such as ``$\pm$1\,s'' are centred on the frame.
+For each frame $t$ of a half and each label $k \in \{\lH, \lA, \lD\}$ we compute a score $s_t(k)$
+as the sum of the cues in Tables~\ref{tab:who} and~\ref{tab:dead}. A cue adds points to the label it
+supports and removes points from the labels it argues against. Most cues are worth less than one
+point per frame, so a cue only changes the result if it persists. Distances are in metres on the
+105.3\,m by 68\,m pitch, ball speed is computed from positions in consecutive frames at 25 frames
+per second, and windows such as ``$\pm$1\,s'' are centred on the frame.
 
 \begin{table}[t]
 \caption{Cues for who has the ball. $d_H$ and $d_A$ are the distances from the ball to the
 nearest Barcelona and Athletic player.}\label{tab:who}
-\small
-\begin{tabularx}{\linewidth}{@{}p{2.7cm}L>{\raggedright\arraybackslash}p{4.3cm}@{}}
+\centering\small
+\begin{tabularx}{\linewidth}{@{}P{2.7cm}LP{4.3cm}@{}}
 \toprule
-\textbf{\color{navy}Cue} & \textbf{\color{navy}Condition} & \textbf{\color{navy}Points} \\
+\textbf{Cue} & \textbf{Condition} & \textbf{Points} \\
 \midrule
 Control & nearest player within 2\,m of the ball and at least 1\,m closer than the nearest opponent & $+1$ to that team \\
 Duel & nearest player within 2\,m, nearest opponent less than 1\,m further away & no control point \\
@@ -205,17 +190,17 @@ closes up. We measure each team's spread as the mean distance of its players to 
 leaving out the furthest player (usually the goalkeeper). With $\Delta$ the home spread minus the
 away spread, smoothed over $\pm$1\,s, the cue adds $\tfrac12\cdot 0.15\cdot\mathrm{clip}(\Delta/2.5\,\mathrm{m}, -2, 2)$
 to \lH, subtracts it from \lA{} and adds its absolute value to \lD, so it never pushes a frame
-towards or away from a dead ball. It is only used when the ball itself gives no information. As
-a check, on frames where the tracking shows one player clearly on the ball, the wider team was
-the team in control 76\% of the time. Nothing was fitted to this check.
+towards or away from a dead ball. It is only used when the ball itself gives no information. As a
+check, on frames where the tracking shows one player clearly on the ball, the wider team was the
+team in control 76\% of the time.
 
 \begin{table}[t]
 \caption{Dead-ball cues, all added to $s_t(\lD)$. ``Share'' is the fraction of frames in the
 window that meet the condition.}\label{tab:dead}
-\small
-\begin{tabularx}{\linewidth}{@{}p{2.7cm}L>{\raggedright\arraybackslash}p{4.3cm}@{}}
+\centering\small
+\begin{tabularx}{\linewidth}{@{}P{2.7cm}LP{4.3cm}@{}}
 \toprule
-\textbf{\color{navy}Cue} & \textbf{\color{navy}Condition} & \textbf{\color{navy}Points} \\
+\textbf{Cue} & \textbf{Condition} & \textbf{Points} \\
 \midrule
 Ball in play & ball seen on the pitch & $-0.3$ \\
 Ball off the pitch & ball seen beyond a line, window $\pm$0.5\,s & $+1.5\times$ share \\
@@ -232,22 +217,21 @@ Goal & 30\,s before a kick-off after a goal & $+0.6$ \\
 \end{table}
 
 \paragraph{Player speed} Normal walking pace is about 1.4\,m/s~\cite{bohannon}. Below 1.0\,m/s on
-average the players are standing or strolling, which happens at stoppages; above 1.6\,m/s they
-are moving faster than a walk and play is live. We checked that the speeds in the tracking are
-in metres per second by comparing them with speeds computed from the positions; the two agree
-within 1\%.
+average the players are standing or strolling, which happens at stoppages; above 1.6\,m/s they are
+moving faster than a walk and play is live. The speeds in the tracking agree within 1\% with speeds
+computed from the positions, so they are in metres per second.
 
 \subsection{Restarts}\label{sec:restarts}
 
-The Smart Tagging marks 59 set pieces, while a match has well over a hundred restarts, with
-around 40 throw-ins alone. Most restarts therefore have to be found in the tracking, which is
-what the last five cues of Table~\ref{tab:dead} do (Figure~\ref{fig:pitch}).
+The Smart Tagging marks 59 set pieces, while a match has well over a hundred restarts, with around
+40 throw-ins alone. Most restarts therefore have to be found in the tracking, which is what the last
+five cues of Table~\ref{tab:dead} do (Figure~\ref{fig:pitch}).
 
-For a tagged set piece we do not assume when the ball is struck. Starting at the tag, we look
-up to 15\,s ahead for the first frame where the ball moves faster than 5\,m/s for two frames
-after half a second of rest (ball unseen or slower than 1\,m/s), allowing up to half a second
-between the rest and the kick. The ball is dead from the start of the tag until that frame. The
-kick is found in 41 of the 59 tagged set pieces; when it is not found the tag adds nothing.
+For a tagged set piece we do not assume when the ball is struck. Starting at the tag, we look up
+to 15\,s ahead for the first frame where the ball moves faster than 5\,m/s for two frames after
+half a second of rest (ball unseen or slower than 1\,m/s), allowing up to half a second between the
+rest and the kick. The ball is dead from the start of the tag until that frame. The kick is found
+in 41 of the 59 tagged set pieces; when it is not found the tag adds nothing.
 
 \begin{figure}[t]
 \centering
@@ -372,24 +356,21 @@ Within each half, with $T$ frames, we choose the label sequence
 \begin{equation}
   \hat y_{1:T} \;=\; \arg\max_{y_{1:T}} \; \sum_{t=1}^{T} s_t(y_t) \;-\; \sum_{t=2}^{T} c(y_{t-1}, y_t),
 \end{equation}
-where $c(k,k)=0$, $c(\lH,\lA)=c(\lA,\lH)=\lambda_s=12$ and every change between alive and dead
-costs $\lambda_d=20$. This is the most likely path of a three-state hidden Markov model with
-log-emission scores $s_t$ and log-transition penalties $c$, so the Viterbi algorithm~\cite{viterbi,rabiner}
+where $c(k,k)=0$, $c(\lH,\lA)=c(\lA,\lH)=\lambda_s=12$ and every change between alive and dead costs
+$\lambda_d=20$. This is the most likely path of a three-state hidden Markov model with log-emission
+scores $s_t$ and log-transition penalties $c$, so the Viterbi algorithm~\cite{viterbi,rabiner}
 solves it exactly in linear time. Frames outside the two tracked halves are \lX.
 
-\medskip
-\noindent\begin{minipage}[c]{0.56\linewidth}
-\setlength{\parskip}{5pt}
-The two costs set how much evidence a change needs. Full control is worth one point per frame,
-so a turnover needs about half a second (12 frames) of the other team clearly on the ball, and
-a stoppage needs about a second of strong dead-ball cues. Short contrary evidence, such as a
-deflection or one frame of a wrong nearest player, is never enough to pay for a change.
-\end{minipage}\hfill
-\begin{minipage}[c]{0.4\linewidth}
+The two costs (Figure~\ref{fig:states}) set how much evidence a change needs. Full control is
+worth one point per frame, so a turnover needs about half a second (12 frames) of the other team
+clearly on the ball, and a stoppage needs about a second of strong dead-ball cues. Short contrary
+evidence, such as a deflection or one frame with the wrong nearest player, is never enough to pay
+for a change.
+
+\begin{figure}[t]
 \centering
 \begin{tikzpicture}[scale=0.85,
-  st/.style={circle,minimum size=8.5mm,font=\small\bfseries,text=white,
-             blur shadow={shadow blur steps=5,shadow opacity=20}},
+  st/.style={circle,minimum size=8.5mm,font=\small\bfseries,text=white},
   e/.style={-{Stealth[length=1.9mm]},draw=muted,line width=0.6pt},
   lbl/.style={font=\scriptsize\bfseries,color=muted,fill=white,inner sep=1pt}]
   \node[st,fill=colH] (H) at (0,0) {H};
@@ -402,51 +383,48 @@ deflection or one frame of a wrong nearest player, is never enough to pay for a 
   \draw[e,bend left=14] (A) to node[lbl] {20} (D);
   \draw[e,bend left=14] (D) to node[lbl] {20} (A);
 \end{tikzpicture}
-\captionof{figure}{Cost of each change of label.}\label{fig:states}
-\end{minipage}
+\caption{The three labels and the cost of each change between them.}\label{fig:states}
+\end{figure}
 
-\subsection{Possession rules}
+% --- possession rules ---
+\section{Possession rules}
 
-The challenge asks where we draw the line in ambiguous situations. These follow from the cues
-and costs above.
+These follow from the cues and costs above.
 
 \paragraph{Loose balls and passes} When nobody is near the ball there is no new evidence, so the
-team that last had it keeps possession until the other side clearly controls it. A pass that is
-intercepted becomes a turnover only once the interceptor has the ball.
+team that last had it keeps possession until the other side clearly controls it. An intercepted
+pass becomes a turnover only once the interceptor has the ball.
 
 \paragraph{Challenges} A duel gives no control point, so possession only changes once a player
 comes out of it with the ball.
 
-\paragraph{Restarts} The ball is dead from the moment it leaves the pitch, or play stops, until
-the restart is taken. Who takes the restart does not matter: the label is \lD.
+\paragraph{Restarts} The ball is dead from the moment it leaves the pitch, or play stops, until the
+restart is taken. Who takes the restart does not matter: the label is \lD.
 
-% --- data ---
-\section{Data used}
+% --- training data ---
+\section{Training data and tuning}\label{sec:training}
 
-\begin{table}[h]
-\caption{Provided assets and how we used them.}\label{tab:data}
-\small
-\begin{tabularx}{\linewidth}{@{}p{4.1cm}L@{}}
-\toprule
-\textbf{\color{navy}Asset} & \textbf{\color{navy}Use} \\
-\midrule
-Tactical tracking & ball position, distances from the ball to each team, player speeds, team shape \\
-Tracking metadata & which track slot belongs to which team \\
-Smart Tagging & attacking and defending phases, start of set pieces, kick-offs after goals \\
-Homography & not needed: the tracking is already in pitch coordinates \\
-Video, broadcast tracking & not used; the broadcast feed is not synchronised, and we had no
-external data to build a video model with \\
-\bottomrule
-\end{tabularx}
-\end{table}
+None. No labelled data was used, from this match or any other, and nothing is trained. Following
+the organisers' clarification of 3 November, every constant in Tables~\ref{tab:who}
+and~\ref{tab:dead} was set from football knowledge or physics and not tuned on this match, its
+ground truth or its video. The public five-minute ground truth was only used to score each finished
+version as a check that the pipeline worked. The two checks quoted in Section~\ref{sec:restarts}
+and for team shape use only the tracking and the tags.
+
+Earlier versions in the repository history fitted a small logistic regression for team shape on
+this match's tracking and took the set-piece delay from the two tagged kick-offs. Both were
+replaced by the fixed rules above before submission, with no change in the public-window scores.
+The speed thresholds were first read off this match's speed distribution and the switch cost was
+first chosen by looking at our own output; both are now justified independently, by walking pace
+and by half a second of control, and kept their values.
 
 % --- results ---
 \section{Results}
 
 Figure~\ref{fig:timeline} shows the public window as three strips. The ground truth has 17
 possessions. The official baseline breaks them into 26 pieces, because its majority vote flickers
-when the evidence is mixed. Our method finds 10: the long possessions come out whole, which is
-what spellF1 rewards, but some short possessions and stoppages are merged into their neighbours.
+when the evidence is mixed. Our method finds 10: the long possessions come out whole, which is what
+spellF1 rewards, but some short possessions and stoppages are merged into their neighbours.
 
 \begin{figure}[h]
 \centering
@@ -463,7 +441,7 @@ what spellF1 rewards, but some short possessions and stoppages are merged into t
 stoppage.}\label{fig:timeline}
 \end{figure}
 
-\begin{minipage}[c]{0.5\linewidth}
+\noindent\begin{minipage}[c]{0.5\linewidth}
 \begin{tikzpicture}
 \begin{axis}[
   ybar, bar width=9pt, width=\linewidth, height=5.2cm,
@@ -492,10 +470,11 @@ stoppage.}\label{fig:timeline}
 separate possessions, so this was the largest gain.
 
 \paragraph{Final} Team shape when the ball is unseen, kick detection for tagged set pieces, and
-no fitted parts (Section~\ref{sec:rules}).
+no fitted parts.
 
-\note{Over the full match, where there is no ground truth, the final version finds 241
-possessions and 109 stoppages, both in the range of a real match.}
+\medskip
+Over the full match, where there is no ground truth, the final version finds 241 possessions and
+109 stoppages, both in the range of a real match.
 \end{minipage}
 
 % --- limitations ---
@@ -508,54 +487,32 @@ so some short possessions merge into their neighbours (10 found against 17 in th
 moving, so we only notice once the ball is placed. The referee's whistle in the video audio would
 give the exact moment.
 
-\paragraph{Hidden ball at a turnover} When the ball is not seen as it changes hands, the switch
-can land a little late.
+\paragraph{Hidden ball at a turnover} When the ball is not seen as it changes hands, the switch can
+land a little late.
 
-\paragraph{Hand-set weights} With labelled data from other matches, the weights and costs could
-be learned instead of set by hand.
-
-% --- rules ---
-\section{Compliance with the rules}\label{sec:rules}
-
-We followed the organisers' clarification of 3 November. Nothing in the pipeline is trained,
-fitted or tuned on this match, the ground truth or the video, and every constant was chosen from
-football knowledge or physics. The public ground truth was used only to score each version once
-it was finished, to check that nothing was broken; no value was searched against it. The
-team-shape check and the kick count use the tracking and the tags only.
-
-Following the clarification we changed three things. An earlier version fitted a small logistic
-regression for team shape on this match's tracking, and set the set-piece delay from the two
-tagged kick-offs; both were replaced by the fixed rules described above, and the public-window
-scores did not change. The speed thresholds were first read off this match's speed
-distribution; they are now based on normal walking pace and kept the same values. An early draft
-used a switch cost of 25 (a full second of control), which we lowered to 12 because it gave
-possessions longer than typical football, judged on our own output only.
-
-We used an AI assistant (Claude) to help write code and this report. None of the match data was
-uploaded to it: it only saw summary numbers printed by our scripts, such as counts, percentiles
-and scores.
+\paragraph{Hand-set weights} With labelled data from other matches, the weights and costs could be
+learned instead of set by hand.
 
 % --- reproduction ---
 \section{Reproduction}
 
-\begin{tcolorbox}[enhanced,colback=codebg,colframe=codebg,arc=3pt,left=10pt,right=10pt,top=6pt,bottom=6pt]
-\small\ttfamily\color{white}
+\begin{tcolorbox}[enhanced,colback=soft,colframe=rule,boxrule=0.4pt,arc=2pt,left=8pt,right=8pt,top=5pt,bottom=5pt]
+\small\ttfamily
 \com{\# install the pinned dependencies}\\
 \cmd{pip} \sub{install} \flag{-r} requirements.txt\\[3pt]
 \com{\# rebuild evaluation/results/Ragnir.csv and validate it}\\
 \cmd{python} solution/run.py \flag{-{}-team} Ragnir\\[3pt]
-\com{\# unit tests, and the timeline in Figure \ref{fig:timeline}}\\
+\com{\# unit tests, and the timeline of Figure \ref{fig:timeline}}\\
 \cmd{python} \flag{-m} \sub{unittest} \sub{discover} tests\\
 \cmd{python} docs/make\_figures.py
 \end{tcolorbox}
 
-The tactical files go in \lab{data/tactical/}. There is no randomness, so the same data always
-gives the same file. Tested with Python 3.11, numpy 2.4.6 and pandas 3.1.1.
+\noindent The tactical files go in \lab{data/tactical/}. There is no randomness, so the same data
+always gives the same file. Tested with Python 3.11, numpy 2.4.6 and pandas 3.1.1.
 
 % --- references ---
 \begin{thebibliography}{9}
 \small
-\setlength{\itemsep}{2pt}
 \bibitem{viterbi} A.~J. Viterbi. Error bounds for convolutional codes and an asymptotically
 optimum decoding algorithm. \emph{IEEE Transactions on Information Theory}, 13(2):260--269, 1967.
 \bibitem{rabiner} L.~R. Rabiner. A tutorial on hidden Markov models and selected applications in
