@@ -47,6 +47,16 @@ Optional, score it on the public 5 minutes:
 python evaluation/run_evaluation.py
 ```
 
+## Tests
+
+```bash
+python -m unittest discover tests
+```
+
+Unit tests on synthetic inputs (no match data needed): the Viterbi step ignores short contrary
+blips, switches once on sustained evidence, keeps possession through missing evidence and marks
+stoppages as dead ball; team names in the tagging must match the tracking exactly.
+
 ## Code
 
 | file | what it does |
@@ -55,6 +65,7 @@ python evaluation/run_evaluation.py
 | `solution/tags.py` | turns Smart Tagging phases and set pieces into weak hints |
 | `solution/decode.py` | per-frame scores for H / A / D, then Viterbi with switching costs |
 | `solution/run.py` | all parameters + the one command that builds the file |
+| `tests/test_solution.py` | unit tests for the decoding and the tag mapping |
 
 Everything else (`games.py`, `starter/`, `evaluation/`) is the organisers' starter repository,
 unchanged, under its MIT licence.
