@@ -10,6 +10,14 @@ the other team clearly controls the ball.
 - Technical document: [docs/Ragnir.pdf](docs/Ragnir.pdf) (LaTeX source in `docs/`)
 - Original challenge README (scorer, starter code, rules): [CHALLENGE_README.md](CHALLENGE_README.md)
 
+## Team
+
+| | |
+|---|---|
+| Peres | [@Pers8](https://github.com/Pers8) |
+| Breal | [@Bral9](https://github.com/Bral9) |
+| | [@mahouboy23](https://github.com/mahouboy23) |
+
 ## Install
 
 Python 3.11 (tested), 3.8+ should work.
