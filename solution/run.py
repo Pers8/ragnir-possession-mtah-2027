@@ -25,6 +25,10 @@ PARAMS = {
     "dist_clip_m": 5.0,
     "w_control": 1.0,
     "w_margin": 0.2,
+    # team shape when the ball is not seen
+    "shape_window_s": 1.0,
+    "shape_cap": 2.0,
+    "w_shape": 0.15,
     # is the ball alive (seconds, m/s)
     "w_ball_in_play": 0.3,
     "w_ball_out": 1.5,

@@ -88,6 +88,8 @@ def build(game=GAME):
         player_speed = np.nanmean(players[:, :, 2], axis=1)
         taker_outside = np.nanmax(np.where(dist <= TAKER_RADIUS_M,
                                            _outside_m(player_xy, scale), np.nan), axis=1)
+        spread_home, n_home = team_spread(player_xy, team == HOME)
+        spread_away, n_away = team_spread(player_xy, team != HOME)
 
     fps = GAMES[game]["fps"]
     return {
@@ -100,8 +102,26 @@ def build(game=GAME):
         "ball_speed": ball_speed(ball_xy, fps),
         "taker_outside": np.nan_to_num(taker_outside, nan=0.0) >= TAKER_OUTSIDE_M,
         "exit_runs": exit_runs(ball_xy, visible, scale, fps),
+        "shape_diff": spread_home - spread_away,
+        "shape_ok": (n_home >= MIN_TEAM_PLAYERS) & (n_away >= MIN_TEAM_PLAYERS),
         "teams": team_names(require(["atd_meta"], game)[0]),
     }
+
+
+# --- team shape ---
+
+MIN_TEAM_PLAYERS = 8     # fewer tracked players and the shape is not trustworthy
+
+
+def team_spread(player_xy, members):
+    """Mean distance of a team's players to their centroid, leaving out the furthest one
+    (usually the goalkeeper). The team in possession spreads out, the other one compacts."""
+    xy = np.where(members[None, :, None], player_xy, np.nan)
+    centroid = np.nanmean(xy, axis=1, keepdims=True)
+    dist = np.linalg.norm(xy - centroid, axis=2)
+    count = np.sum(~np.isnan(dist), axis=1)
+    spread = (np.nansum(dist, axis=1) - np.nanmax(dist, axis=1)) / np.maximum(count - 1, 1)
+    return spread, count
 
 
 # --- dead-ball cues ---

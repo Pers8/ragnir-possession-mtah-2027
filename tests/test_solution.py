@@ -73,6 +73,23 @@ class DeadBallCueTest(unittest.TestCase):
         np.testing.assert_allclose(features._outside_m(xy, self.PITCH), [1.0, -34.0, 1.0])
 
 
+class TeamShapeTest(unittest.TestCase):
+
+    def test_spread_ignores_the_furthest_player(self):
+        xy = np.array([[[0.0, 1.0], [0.0, -1.0], [1.0, 0.0], [-1.0, 0.0], [60.0, 0.0]]])
+        members = np.ones(5, dtype=bool)
+        with_keeper, count = features.team_spread(xy, members)
+        self.assertEqual(int(count[0]), 5)
+        self.assertLess(with_keeper[0], 15.0)
+
+    def test_logistic_fit_recovers_direction(self):
+        x = np.r_[np.linspace(-5, 1, 300), np.linspace(-1, 5, 300)]
+        y = np.r_[np.zeros(300), np.ones(300)]
+        slope, bias = decode.fit_logistic(x, y)
+        self.assertGreater(slope, 0)
+        self.assertAlmostEqual(-bias / slope, 0.0, delta=0.2)
+
+
 class HelpersTest(unittest.TestCase):
 
     def test_rolling_mean_shrinks_at_edges(self):

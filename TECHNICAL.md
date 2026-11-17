@@ -16,8 +16,9 @@ when the evidence for the other team is strong enough, for long enough, to pay f
 Weak or missing evidence (ball hidden, players in a duel) costs nothing, so the current
 possession simply carries on.
 
-No machine learning and no training data: every number is a hand-set constant with a football
-reason (table below). The public 5-minute ground truth was only used to check that the pipeline works (see
+No human-labelled training data. Every weight is a hand-set constant with a football reason
+(table below); the only learned part is the team-shape model, fitted on pseudo-labels the
+tracking produces by itself. The public 5-minute ground truth was only used to check that the pipeline works (see
 *Development history*).
 
 ## Assets used
@@ -38,6 +39,7 @@ reason (table below). The public 5-minute ground truth was only used to check th
 - Both teams within **1 m** of each other near the ball → a duel, no evidence (the possession does not change during a challenge).
 - Otherwise a small bonus for whichever team is closer, capped at a 5 m difference (a pass in the air is near nobody).
 - Smart Tagging: an attacking phase gives its team a small bonus; a defending phase gives the other team a small bonus.
+- **Team shape, when the ball cannot tell us** (ball unseen or out of play): the team in possession spreads out, the defending team compacts. We measure each team's spread (mean distance of its players to their centroid, leaving out the furthest one, usually the goalkeeper) and learn how the home-minus-away spread relates to possession with a one-variable logistic regression. **The training labels are pseudo-labels produced by the tracking itself** — the frames where one player clearly controls the ball — so no human label is involved. On those frames the shape alone picks the right team 76% of the time. It only shifts H against A, never alive against dead.
 
 **Is the ball dead**
 
@@ -76,6 +78,7 @@ reason (table below). The public 5-minute ground truth was only used to check th
 | taker outside | 0.5 m beyond the line, within 2 m of the ball | a throw-in taker stands behind the touchline holding the ball |
 | exit | last seen ≤ 3 m from a line, ≥ 2 m/s outward | a ball heading out that is then lost has almost always crossed the line |
 | goal celebration | 30 s | restarts after a goal never come sooner |
+| team shape weight | 0.15, log-odds capped at ±2 | a calibrated but heavily autocorrelated signal: it should tip close calls in blind stretches, not override them |
 | tag weights | 0.15–0.6 | smaller than tracking: the tags are automatic and coarse (5–35 s windows) |
 
 All of them are in `PARAMS` at the top of `solution/run.py`. The switch cost was lowered once, from
@@ -85,20 +88,24 @@ No parameter was searched against the ground truth.
 ## Development history and results
 
 1. **v1** — tracking distances, ball out of play, player speed, Smart Tagging, Viterbi.
-2. **v2** (submitted) — adds the three tracking restart detectors and the goal-celebration rule
+2. **v2** — adds the three tracking restart detectors and the goal-celebration rule
    above. Motivated by the tagging covering only 59 restarts, so v1 depended on
    slow players to find the rest, not by the score.
+3. **v3** (submitted) — adds team-shape evidence for frames where the ball is not seen, learned
+   from the tracking's own clear-control frames. Small effect by design (0.2% of frames change).
 
-The public 5-minute ground truth was scored three times in total (v1 twice, v2 once), only to check
-that each version worked. It is far too small to tune on (17 possessions).
+The public 5-minute ground truth was scored five times in total (v1 twice, v2 once, v3 twice — the
+second after fixing a bug that let team shape push frames away from dead ball), only to check that
+each version worked. It is far too small to tune on (17 possessions).
 
 | public 5 minutes | spellF1 | macroF1 | alive/dead F1 |
 |---|---|---|---|
-| **v2 (submitted)** | **0.430** | **0.704** | **0.930** |
+| **v3 (submitted)** | **0.430** | **0.705** | **0.930** |
+| v2 | 0.430 | 0.704 | 0.930 |
 | v1 | 0.385 | 0.596 | 0.907 |
 | baseline_smooth50 (official floor) | 0.326 | 0.621 | — |
 
-Full match (no ground truth, plausibility only): 238 possessions, 107 stoppages.
+Full match (no ground truth, plausibility only): 239 possessions, 108 stoppages.
 
 ## Limitations and what we would do with more time
 
