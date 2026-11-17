@@ -21,7 +21,6 @@ DEFENDING = {
 }
 SET_PIECE = "set pieces"
 AFTER_GOAL = "kick off (after goal)"
-KICKOFF_TYPES = {"kick off (start)", AFTER_GOAL}
 NO_TEAM = {"", "n/a"}
 
 
@@ -40,8 +39,26 @@ def side_of(team_tag, teams):
     return names.index(tag)
 
 
-def evidence(n_frames, teams, params, fps):
+def find_restart(feats, start, stop, params, fps):
+    """First frame in [start, stop) where the ball is struck after resting. Resting means half a
+    second with the ball unseen or slower than walking pace, ending at most half a second before
+    the kick (possibly before the tag opens); struck means faster than kick_speed for two frames.
+    Returns start when there is no such kick, so the tag then adds no dead-ball time."""
+    rest = int(params["rest_before_kick_s"] * fps)
+    first = max(0, start - 2 * rest)
+    speed = feats["ball_speed"][first:stop]
+    quiet = ~(feats["visible"][first:stop] & (speed >= params["still_speed"]))
+    moving = feats["visible"][first:stop] & (speed > params["kick_speed"])
+    rested = np.convolve(quiet, np.ones(rest), "full")[:len(quiet)] >= rest
+    for k in range(start - first, len(quiet) - 1):
+        if moving[k] and moving[k + 1] and rested[max(0, k - rest):k].any():
+            return first + k
+    return start
+
+
+def evidence(n_frames, feats, params, fps):
     """(team_score[n, 2], dead_score[n]) accumulated over every tagged interval."""
+    teams = feats["teams"]
     team_score = np.zeros((n_frames, 2), dtype=np.float32)
     dead_score = np.zeros(n_frames, dtype=np.float32)
 
@@ -59,8 +76,8 @@ def evidence(n_frames, teams, params, fps):
             team_score[start:end, 1 - side] += params["tag_phase"]
         elif code == SET_PIECE:
             kind = _clean(event["tags"].get("Type"))
-            lead_s = params["kickoff_lead_s"] if kind in KICKOFF_TYPES else params["setpiece_lead_s"]
-            restart = min(end, start + int(lead_s * fps))
+            stop = min(end, start + int(params["setpiece_max_wait_s"] * fps))
+            restart = find_restart(feats, start, stop, params, fps)
             dead_score[start:restart] += params["tag_dead"]
             if kind == AFTER_GOAL:
                 celebration = max(0, start - int(params["goal_dead_s"] * fps))

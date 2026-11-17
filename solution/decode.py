@@ -18,18 +18,6 @@ def rolling_mean(values, half_width):
     return (cumulative[high] - cumulative[low]) / (high - low)
 
 
-def fit_logistic(x, y, iterations=25):
-    """1-D logistic regression P(y | x) = sigmoid(slope * x + bias), Newton's method."""
-    X = np.column_stack([x, np.ones(len(x))])
-    w = np.zeros(2)
-    for _ in range(iterations):
-        prob = 1 / (1 + np.exp(-X @ w))
-        gradient = X.T @ (y - prob)
-        hessian = (X * (prob * (1 - prob))[:, None]).T @ X
-        w += np.linalg.solve(hessian + 1e-9 * np.eye(2), gradient)
-    return w[0], w[1]
-
-
 # --- emissions ---
 
 def emissions(feats, tag_team, tag_dead, params, fps):
@@ -56,12 +44,10 @@ def emissions(feats, tag_team, tag_dead, params, fps):
         score[clear & (d_home < d_away), H] += p["w_control"]
         score[clear & (d_away < d_home), A] += p["w_control"]
 
-        # team shape where the ball cannot tell us, calibrated on the clear-control frames
+        # team shape where the ball cannot tell us: the side in possession spreads out
         shape = rolling_mean(feats["shape_diff"], int(p["shape_window_s"] * fps))
         usable = feats["shape_ok"] & ~np.isnan(feats["shape_diff"])
-        known = clear & usable
-        slope, bias = fit_logistic(shape[known], (d_home < d_away)[known])
-        log_odds = np.clip(slope * shape + bias, -p["shape_cap"], p["shape_cap"])
+        log_odds = np.clip(shape / p["shape_unit_m"], -p["shape_cap"], p["shape_cap"])
         blind = usable & ~playable
         half = 0.5 * p["w_shape"] * log_odds[blind]
         score[blind, H] += half

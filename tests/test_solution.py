@@ -82,12 +82,25 @@ class TeamShapeTest(unittest.TestCase):
         self.assertEqual(int(count[0]), 5)
         self.assertLess(with_keeper[0], 15.0)
 
-    def test_logistic_fit_recovers_direction(self):
-        x = np.r_[np.linspace(-5, 1, 300), np.linspace(-1, 5, 300)]
-        y = np.r_[np.zeros(300), np.ones(300)]
-        slope, bias = decode.fit_logistic(x, y)
-        self.assertGreater(slope, 0)
-        self.assertAlmostEqual(-bias / slope, 0.0, delta=0.2)
+
+class RestartTest(unittest.TestCase):
+    PARAMS = {"still_speed": 1.0, "kick_speed": 5.0, "rest_before_kick_s": 0.5}
+
+    def feats(self, speeds):
+        speeds = np.array(speeds, dtype=float)
+        return {"visible": ~np.isnan(speeds), "ball_speed": speeds}
+
+    def test_restart_is_the_kick_after_the_ball_rests(self):
+        speeds = [8.0] * 10 + [0.2] * 30 + [12.0] * 10
+        self.assertEqual(tags.find_restart(self.feats(speeds), 0, 50, self.PARAMS, fps=25), 40)
+
+    def test_rest_just_before_the_tag_counts(self):
+        speeds = [0.2] * 20 + [12.0] * 30
+        self.assertEqual(tags.find_restart(self.feats(speeds), 20, 50, self.PARAMS, fps=25), 20)
+
+    def test_no_kick_means_no_dead_time(self):
+        speeds = [8.0] * 50
+        self.assertEqual(tags.find_restart(self.feats(speeds), 0, 50, self.PARAMS, fps=25), 0)
 
 
 class HelpersTest(unittest.TestCase):

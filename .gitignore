@@ -65,3 +65,9 @@ env/
 
 # -- solution cache --
 solution/cache/
+
+# -- latex build files --
+docs/*.aux
+docs/*.log
+docs/*.out
+!docs/Ragnir.pdf

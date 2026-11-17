@@ -3,11 +3,11 @@
 Frame-level ball possession (`H` / `A` / `D` / `X`) for FC Barcelona vs Athletic Club, built from
 Metrica Sports' automatic tracking and Smart Tagging.
 
-**Method in one line:** per-frame evidence for *home / away / dead ball* from the tracking, the
-tagging and a team-shape model learned from the tracking's own pseudo-labels, then a Viterbi pass with a cost for every change of label, so possession only switches when
+**Method in one line:** per-frame evidence for *home / away / dead ball* from the tracking and the
+Smart Tagging, then a Viterbi pass with a cost for every change of label, so possession only switches when
 the other team clearly controls the ball.
 
-- Technical document: [TECHNICAL.md](TECHNICAL.md)
+- Technical document: [docs/Ragnir.pdf](docs/Ragnir.pdf) (LaTeX source in `docs/`)
 - Original challenge README (scorer, starter code, rules): [CHALLENGE_README.md](CHALLENGE_README.md)
 
 ## Install
@@ -55,7 +55,7 @@ python -m unittest discover tests
 
 Unit tests on synthetic inputs (no match data needed): the Viterbi step ignores short contrary
 blips, switches once on sustained evidence, keeps possession through missing evidence and marks
-stoppages as dead ball; the restart detectors, team-shape measure and logistic fit behave as
+stoppages as dead ball; the restart and kick detectors and the team-shape measure behave as
 expected; team names in the tagging must match the tracking exactly.
 
 ## Code

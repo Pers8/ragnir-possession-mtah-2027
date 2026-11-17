@@ -27,6 +27,7 @@ PARAMS = {
     "w_margin": 0.2,
     # team shape when the ball is not seen
     "shape_window_s": 1.0,
+    "shape_unit_m": 2.5,
     "shape_cap": 2.0,
     "w_shape": 0.15,
     # is the ball alive (seconds, m/s)
@@ -52,8 +53,9 @@ PARAMS = {
     "tag_phase": 0.15,
     "tag_dead": 0.6,
     "tag_setpiece_team": 0.2,
-    "setpiece_lead_s": 3.5,
-    "kickoff_lead_s": 3.5,
+    "setpiece_max_wait_s": 15.0,
+    "kick_speed": 5.0,
+    "rest_before_kick_s": 0.5,
     "setpiece_follow_s": 5.0,
     "goal_dead_s": 30.0,
     # viterbi
@@ -73,7 +75,7 @@ def build_labels(game=GAME, params=PARAMS):
     fps = GAMES[game]["fps"]
     n_frames = source_frames("tactical", game)
     feats = features.build(game)
-    tag_team, tag_dead = tags.evidence(n_frames, feats["teams"], params, fps)
+    tag_team, tag_dead = tags.evidence(n_frames, feats, params, fps)
     score = decode.emissions(feats, tag_team, tag_dead, params, fps)
     return decode.decode(score, half_video_blocks(game), n_frames, params)
 
