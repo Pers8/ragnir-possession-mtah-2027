@@ -86,7 +86,8 @@ No parameter was searched against the ground truth.
 
 1. **v1** — tracking distances, ball out of play, player speed, Smart Tagging, Viterbi.
 2. **v2** (submitted) — adds the three tracking restart detectors and the goal-celebration rule
-   above. Motivated by v1 finding far fewer restarts than a match contains, not by the score.
+   above. Motivated by the tagging covering only 59 restarts, so v1 depended on
+   slow players to find the rest, not by the score.
 
 The public 5-minute ground truth was scored three times in total (v1 twice, v2 once), only to check
 that each version worked. It is far too small to tune on (17 possessions).
