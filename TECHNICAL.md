@@ -17,8 +17,8 @@ Weak or missing evidence (ball hidden, players in a duel) costs nothing, so the 
 possession simply carries on.
 
 No machine learning and no training data: every number is a hand-set constant with a football
-reason (table below). The public 5-minute ground truth was only used to check the file and the
-frame alignment.
+reason (table below). The public 5-minute ground truth was only used to check that the pipeline works (see
+*Development history*).
 
 ## Assets used
 
@@ -45,6 +45,13 @@ frame alignment.
 - Ball not seen for a whole 2-second stretch → some dead-ball evidence.
 - Players slow on average (under ~1 m/s, measured over 1 s) → dead-ball evidence; players fast → evidence that the ball is alive.
 - Smart Tagging set piece → dead ball in its first 3.5 s (the restart), then a bonus for the team taking it for 5 s.
+- Smart Tagging kick-off after a goal → dead ball for the 30 s before it (celebration, VAR check).
+
+**Restarts the tagging misses** — the tags mark 59 set pieces, while a match has well over 100 restarts, so the tracking has to find the rest itself:
+
+- **Ball leaves the pitch:** the ball is last seen within 3 m of a line, moving towards it at 2 m/s or more, then disappears → dead for the whole gap.
+- **Ball placed:** the ball is visible but moving under 1 m/s for about a second → a free kick, goal kick or corner being set up.
+- **Taker outside the line:** a player stands at least 0.5 m beyond a line within 2 m of the ball → a throw-in or corner about to be taken.
 
 ## Possession rules
 
@@ -65,25 +72,37 @@ frame alignment.
 | alive↔dead cost | 20 | stoppages last several seconds; stops one-frame blips |
 | slow / fast player speed | 1.0 / 1.6 m/s | lower quartile and median of average player speed in play (measured on the tracking itself, no labels) |
 | set-piece lead | 3.5 s | where the restart sits inside the tagged kick-off windows |
+| still ball | < 1 m/s over 1 s | a rolling or passed ball is faster than walking pace; a placed one is not |
+| taker outside | 0.5 m beyond the line, within 2 m of the ball | a throw-in taker stands behind the touchline holding the ball |
+| exit | last seen ≤ 3 m from a line, ≥ 2 m/s outward | a ball heading out that is then lost has almost always crossed the line |
+| goal celebration | 30 s | restarts after a goal never come sooner |
 | tag weights | 0.15–0.6 | smaller than tracking: the tags are automatic and coarse (5–35 s windows) |
 
 All of them are in `PARAMS` at the top of `solution/run.py`. The switch cost was lowered once, from
 25 to 12, because 25 produced possessions averaging 22 s over the match, longer than real football.
+No parameter was searched against the ground truth.
 
-## Results
+## Development history and results
 
-On the public 5 minutes (a pipeline check only, too small to rank anything):
+1. **v1** — tracking distances, ball out of play, player speed, Smart Tagging, Viterbi.
+2. **v2** (submitted) — adds the three tracking restart detectors and the goal-celebration rule
+   above. Motivated by v1 finding far fewer restarts than a match contains, not by the score.
 
-| | spellF1 | macroF1 |
-|---|---|---|
-| ours | 0.385 | 0.596 |
-| baseline_smooth50 (official floor) | 0.326 | 0.621 |
+The public 5-minute ground truth was scored three times in total (v1 twice, v2 once), only to check
+that each version worked. It is far too small to tune on (17 possessions).
 
-Full match: 238 possessions, average 17.2 s.
+| public 5 minutes | spellF1 | macroF1 | alive/dead F1 |
+|---|---|---|---|
+| **v2 (submitted)** | **0.430** | **0.704** | **0.930** |
+| v1 | 0.385 | 0.596 | 0.907 |
+| baseline_smooth50 (official floor) | 0.326 | 0.621 | — |
+
+Full match (no ground truth, plausibility only): 238 possessions, 107 stoppages.
 
 ## Limitations and what we would do with more time
 
-- **Dead balls are under-detected** on the public window (we catch about 1 in 6 dead frames there): the ball often stays inside the lines while play is stopped (fouls, offsides, free kicks). Detecting the referee's whistle from the video audio, or the ball standing still with players walking, would help.
+- **Fouls and offsides** stop play with the ball still inside the pitch and moving; we only see them once the ball is placed. The referee's whistle in the video audio would catch them at the right moment.
+- **Possessions are still merged** more often than split: quick one-touch turnovers rarely give the clear control the model needs before switching.
 - Tracking slots swap identity, but we only need the team, so that does not hurt.
 - When the ball is hidden at a turnover, the switch is placed late.
 - No learned model: with hand-labelled data from **other** matches, the hand-set weights could be learned instead.

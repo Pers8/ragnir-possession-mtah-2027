@@ -59,6 +59,13 @@ def emissions(feats, tag_team, tag_dead, params, fps):
         score[:, D] += p["w_slow"] * slow
         score[:, D] -= p["w_fast"] * fast
 
+        # restarts the tags miss
+        still = feats["visible"] & (feats["ball_speed"] < p["still_speed"])
+        score[:, D] += p["w_still"] * rolling_mean(still, int(p["still_window_s"] * fps)) ** 2
+        taker = rolling_mean(feats["taker_outside"], int(p["taker_window_s"] * fps))
+        score[:, D] += p["w_taker"] * taker
+        score[:, D] += p["w_exit"] * feats["exit_runs"]
+
     # smart tagging
     score[:, H] += tag_team[:, 0] - tag_team[:, 1]
     score[:, A] += tag_team[:, 1] - tag_team[:, 0]

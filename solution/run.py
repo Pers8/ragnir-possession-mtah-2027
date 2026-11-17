@@ -37,6 +37,13 @@ PARAMS = {
     "speed_band": 0.5,
     "w_slow": 0.8,
     "w_fast": 0.5,
+    # restarts the tags miss
+    "still_speed": 1.0,
+    "still_window_s": 1.0,
+    "w_still": 0.8,
+    "taker_window_s": 0.5,
+    "w_taker": 1.0,
+    "w_exit": 1.2,
     # smart tagging
     "tag_phase": 0.15,
     "tag_dead": 0.6,
@@ -44,6 +51,7 @@ PARAMS = {
     "setpiece_lead_s": 3.5,
     "kickoff_lead_s": 3.5,
     "setpiece_follow_s": 5.0,
+    "goal_dead_s": 30.0,
     # viterbi
     "switch_cost": 12.0,
     "dead_cost": 20.0,

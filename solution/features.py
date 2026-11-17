@@ -86,7 +86,10 @@ def build(game=GAME):
         d_home = np.nanmin(np.where(home, dist, np.nan), axis=1)
         d_away = np.nanmin(np.where(~home, dist, np.nan), axis=1)
         player_speed = np.nanmean(players[:, :, 2], axis=1)
+        taker_outside = np.nanmax(np.where(dist <= TAKER_RADIUS_M,
+                                           _outside_m(player_xy, scale), np.nan), axis=1)
 
+    fps = GAMES[game]["fps"]
     return {
         "recorded": recorded,
         "visible": visible,
@@ -94,6 +97,48 @@ def build(game=GAME):
         "d_home": d_home,
         "d_away": d_away,
         "player_speed": player_speed,
+        "ball_speed": ball_speed(ball_xy, fps),
+        "taker_outside": np.nan_to_num(taker_outside, nan=0.0) >= TAKER_OUTSIDE_M,
+        "exit_runs": exit_runs(ball_xy, visible, scale, fps),
         "teams": team_names(require(["atd_meta"], game)[0]),
     }
+
+
+# --- dead-ball cues ---
+
+TAKER_RADIUS_M = 2.0     # a throw-in / corner taker is touching the ball
+TAKER_OUTSIDE_M = 0.5    # and standing clearly beyond the line
+EXIT_LINE_M = 3.0        # ball last seen this close to a line ...
+EXIT_SPEED = 2.0         # ... moving outward at least this fast (m/s)
+
+
+def _outside_m(xy, scale):
+    """How far each point is beyond the nearest pitch line, in metres (<= 0 inside)."""
+    return np.maximum.reduce([-xy[..., 0], xy[..., 0] - scale[0], -xy[..., 1], xy[..., 1] - scale[1]])
+
+
+def ball_speed(ball_xy, fps):
+    """Ball speed in m/s from positions, NaN where either neighbouring frame is missing."""
+    speed = np.full(len(ball_xy), np.nan)
+    speed[1:] = np.linalg.norm(np.diff(ball_xy, axis=0), axis=1) * fps
+    return speed
+
+
+def exit_runs(ball_xy, visible, scale, fps):
+    """True on every frame of a gap in the ball track that starts with the ball leaving the pitch."""
+    out = np.zeros(len(visible), dtype=bool)
+    seen = np.flatnonzero(visible)
+    gaps = np.flatnonzero(np.diff(seen) > 1)
+    for g in gaps:
+        last, back = seen[g], seen[g] - 2
+        if back < 0 or not visible[back]:
+            continue
+        velocity = (ball_xy[last] - ball_xy[back]) * fps / 2
+        pos = ball_xy[last]
+        to_line = np.array([pos[0], scale[0] - pos[0], pos[1], scale[1] - pos[1]])
+        outward = np.array([-velocity[0], velocity[0], -velocity[1], velocity[1]])
+        line = int(np.argmin(to_line))
+        if to_line[line] <= EXIT_LINE_M and outward[line] >= EXIT_SPEED:
+            out[last + 1:seen[g + 1]] = True
+    return out
 

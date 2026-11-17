@@ -20,7 +20,8 @@ DEFENDING = {
     "defensive transition",
 }
 SET_PIECE = "set pieces"
-KICKOFF_TYPES = {"kick off (start)", "kick off (after goal)"}
+AFTER_GOAL = "kick off (after goal)"
+KICKOFF_TYPES = {"kick off (start)", AFTER_GOAL}
 NO_TEAM = {"", "n/a"}
 
 
@@ -61,6 +62,9 @@ def evidence(n_frames, teams, params, fps):
             lead_s = params["kickoff_lead_s"] if kind in KICKOFF_TYPES else params["setpiece_lead_s"]
             restart = min(end, start + int(lead_s * fps))
             dead_score[start:restart] += params["tag_dead"]
+            if kind == AFTER_GOAL:
+                celebration = max(0, start - int(params["goal_dead_s"] * fps))
+                dead_score[celebration:start] += params["tag_dead"]
             if side is not None:
                 after = min(end, restart + int(params["setpiece_follow_s"] * fps))
                 team_score[restart:after, side] += params["tag_setpiece_team"]
