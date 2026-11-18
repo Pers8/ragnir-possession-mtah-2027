@@ -14,9 +14,9 @@ the other team clearly controls the ball.
 
 | | |
 |---|---|
-| Peres | [@Pers8](https://github.com/Pers8) |
-| Breal | [@Bral9](https://github.com/Bral9) |
-| | [@mahouboy23](https://github.com/mahouboy23) |
+| Péres | [@Pers8](https://github.com/Pers8) |
+| Bréal | [@Bral9](https://github.com/Bral9) |
+| Mahouna | [@mahouboy23](https://github.com/mahouboy23) |
 
 ## Install
 
